@@ -1,9 +1,10 @@
 #ifndef FUNCIONES_GRUPO_H_INCLUDED
 #define FUNCIONES_GRUPO_H_INCLUDED
-/*
-Aquí deben hacer los includes de sus archivos individuales, por ejemplo:
-#include "funciones_rufino.h"
- */
+#include "funciones_castillo.h"
+#include "funciones_tamburrini.h"
+#include "funciones_aguila.h"
+#include "funciones_saquilan.h"
+
 
 int solucion(int argc, char* argv[]);
 
