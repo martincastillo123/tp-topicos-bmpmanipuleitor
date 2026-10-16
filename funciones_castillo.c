@@ -67,7 +67,7 @@ sImagen* TonalidadAzul(const sImagen *original, int parametro)
 {
     // [APRENDER] Este filtro no usa porcentaje. (void)parametro le dice al
     // [APRENDER] compilador "se que no lo uso" para que no avise (warning).
-    (void)parametro;
+
 
     // [APRENDER] Empiezo con una copia exacta de la imagen. Si falla devuelve NULL.
     sImagen *resultado = CopiarImagen(original);
@@ -81,7 +81,7 @@ sImagen* TonalidadAzul(const sImagen *original, int parametro)
     {
         for(int j = 0; j < resultado->ancho; j++)
         {
-            int nuevo=resultado->pixeles[i][j].b+resultado->pixeles[i][j].b*(parametro/100);
+            int nuevo=resultado->pixeles[i][j].b+resultado->pixeles[i][j].b*parametro/100;
             if(nuevo>255)
                 nuevo=255;
             resultado->pixeles[i][j].b=nuevo;
@@ -94,7 +94,7 @@ sImagen* TonalidadRojo(const sImagen *original, int parametro)
 {
     // [APRENDER] Este filtro no usa porcentaje. (void)parametro le dice al
     // [APRENDER] compilador "se que no lo uso" para que no avise (warning).
-    (void)parametro;
+
 
     // [APRENDER] Empiezo con una copia exacta de la imagen. Si falla devuelve NULL.
     sImagen *resultado = CopiarImagen(original);
@@ -108,7 +108,7 @@ sImagen* TonalidadRojo(const sImagen *original, int parametro)
     {
         for(int j = 0; j < resultado->ancho; j++)
         {
-            int nuevo=resultado->pixeles[i][j].r+resultado->pixeles[i][j].r*(parametro/100);
+            int nuevo=resultado->pixeles[i][j].r+resultado->pixeles[i][j].r*parametro/100;
             if(nuevo>255)
                 nuevo=255;
             resultado->pixeles[i][j].r=nuevo;
@@ -121,7 +121,7 @@ sImagen* TonalidadVerde(const sImagen *original, int parametro)
 {
     // [APRENDER] Este filtro no usa porcentaje. (void)parametro le dice al
     // [APRENDER] compilador "se que no lo uso" para que no avise (warning).
-    (void)parametro;
+
 
     // [APRENDER] Empiezo con una copia exacta de la imagen. Si falla devuelve NULL.
     sImagen *resultado = CopiarImagen(original);
@@ -135,7 +135,7 @@ sImagen* TonalidadVerde(const sImagen *original, int parametro)
     {
         for(int j = 0; j < resultado->ancho; j++)
         {
-            int nuevo=resultado->pixeles[i][j].g+resultado->pixeles[i][j].g*(parametro/100);
+            int nuevo=resultado->pixeles[i][j].g+resultado->pixeles[i][j].g*parametro/100;
             if(nuevo>255)
                 nuevo=255;
             resultado->pixeles[i][j].g=nuevo;
