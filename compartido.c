@@ -78,10 +78,9 @@ Imagen *cargarBMP(const char *nombreArchivo) {
         bytesFaltantes--;
     }
 
-    if (imagen->cabeceraImagen.tamanoCabecera > 40) {
-        imagen->cabeceraImagen.tamanoCabecera = 40;
-        imagen->cabeceraArchivo.inicioDatos = 54;
-    }
+    // generarBMP siempre escribe una cabecera de 54 bytes, sin bytes extra
+    imagen->cabeceraImagen.tamanoCabecera = 40;
+    imagen->cabeceraArchivo.inicioDatos = 54;
 
     if (!reservarMatriz(imagen)) {
         free(imagen); fclose(archivo); return NULL;
@@ -116,8 +115,18 @@ bool generarBMP(const char *nombreArchivoSalida, const Imagen *imagen) {
     FILE *archivo = fopen(nombreArchivoSalida, "wb");
     if (!archivo) return false;
 
+    int ancho = imagen->cabeceraImagen.ancho;
+    int alto = imagen->cabeceraImagen.alto;
+    int altoAbs = (alto < 0) ? -alto : alto;
+    int padding = (4 - (ancho * 3) % 4) % 4;
+    unsigned char relleno[3] = {0, 0, 0};
+
+    // Recalculamos los tamanos porque algunos filtros cambian las dimensiones
+    unsigned int tamanoImagen = (unsigned int)((ancho * 3 + padding) * altoAbs);
+    unsigned int tamanoArchivo = imagen->cabeceraArchivo.inicioDatos + tamanoImagen;
+
     fwrite(&imagen->cabeceraArchivo.tipo, sizeof(unsigned short), 1, archivo);
-    fwrite(&imagen->cabeceraArchivo.tamanoArchivo, sizeof(unsigned int), 1, archivo);
+    fwrite(&tamanoArchivo, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.reservado1, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.reservado2, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.inicioDatos, sizeof(unsigned int), 1, archivo);
@@ -128,17 +137,11 @@ bool generarBMP(const char *nombreArchivoSalida, const Imagen *imagen) {
     fwrite(&imagen->cabeceraImagen.planos, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraImagen.bitsPorPixel, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraImagen.compresion, sizeof(unsigned int), 1, archivo);
-    fwrite(&imagen->cabeceraImagen.tamanoImagen, sizeof(unsigned int), 1, archivo);
+    fwrite(&tamanoImagen, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.resolucionHorizontal, sizeof(int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.resolucionVertical, sizeof(int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.coloresTabla, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.coloresImportantes, sizeof(unsigned int), 1, archivo);
-
-    int ancho = imagen->cabeceraImagen.ancho;
-    int alto = imagen->cabeceraImagen.alto;
-    int altoAbs = (alto < 0) ? -alto : alto;
-    int padding = (4 - (ancho * 3) % 4) % 4;
-    unsigned char relleno[3] = {0, 0, 0};
 
     for (int fila = altoAbs - 1; fila >= 0; fila--) {
         for (int col = 0; col < ancho; col++) {
