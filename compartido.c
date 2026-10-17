@@ -232,7 +232,20 @@ bool obtenerFiltroConPorcentaje(const char *argumento, char *nombre, int *porcen
     strncpy(nombre, argumento, longitudNombre);
     nombre[longitudNombre] = '\0';
 
-    *porcentaje = atoi(igual + 1);
+    // El valor tiene que ser de 1 a 3 digitos; si no, se marca con -1 para que falle la validacion de rango
+    const char *valor = igual + 1;
+    if (*valor == '\0') {
+        *porcentaje = -1;
+        return true;
+    }
+    for (const char *c = valor; *c != '\0'; c++) {
+        if (*c < '0' || *c > '9' || c - valor >= 3) {
+            *porcentaje = -1;
+            return true;
+        }
+    }
+
+    *porcentaje = atoi(valor);
     return true;
 }
 

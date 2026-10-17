@@ -54,8 +54,8 @@ bool achicarMatriz(Imagen *imagen, int porcentaje)
         for (int col = 0; col < nuevoAncho; col++) {
 
             // Calculamos a qué posición de la imagen original corresponde
-            int filaVieja = (fila * 100) / porcentaje;
-            int colVieja = (col * 100) / porcentaje;
+            int filaVieja = (fila * altoViejo) / nuevoAlto;
+            int colVieja = (col * anchoViejo) / nuevoAncho;
 
             // Evitamos desbordamientos por redondeo
             if (filaVieja >= altoViejo) filaVieja = altoViejo - 1;
