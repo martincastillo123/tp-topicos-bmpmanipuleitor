@@ -268,7 +268,6 @@ bool ejecutarAumentarContraste(Imagen *imagen, int porcentaje, char* nombrefiltr
     aumentar_contraste(copia,porcentaje);
 
     // Generamos el nombre y guardamos
-    nombrefiltro=nombrefiltro+2;
     generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombrefiltro, nomarch);
     generarBMP(destino, copia);
 
