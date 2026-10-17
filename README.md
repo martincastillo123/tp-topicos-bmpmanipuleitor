@@ -1,1 +1,0 @@
-# tp-topicos-bmpmanipuleitor

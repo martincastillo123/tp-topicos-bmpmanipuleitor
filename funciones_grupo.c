@@ -1,67 +1,59 @@
-/*
-    Grupo: EDITOR
-
-    Apellido(s), nombre(s): Castillo, Martin
-    DNI: 46196957
-    Entrega: Sí
-
-    Apellido(s), nombre(s): Tamburrini, Nicolas
-    DNI: 46573624
-    Entrega: Sí
-
-    Apellido(s), nombre(s): Aguila, Mateo Ezequiel
-    DNI: 46563915
-    Entrega: Sí
-
-    Apellido(s), nombre(s): Saquilan, Tomas
-    DNI: 42283011
-    Entrega: Sí
-*/
-
-#include <stdio.h>
 #include "funciones_grupo.h"
-#include "compartido.h"
 
-int solucion(int argc, char* argv[])
-{
-    /*
-        PROVISORIO: recorrido de prueba del nucleo BMP (cargar, copiar, escribir).
-        Reemplazar por el parser de argumentos y la ejecucion de cada filtro.
-    */
-    if(argc < 2)
-    {
-        printf("\nUso: %s [--filtros...] archivo.bmp", argv[0]);
-        return 1;
+// Tabla global de filtros simples y con porcentaje asignando las funciones de cada integrante
+static Filtro filtros[] = {
+
+    {"--negativo", ejecutarNegativo, false},
+    {"--aumentar-contraste", ejecutarAumentarContraste, false},
+    {"--rotar-derecha", ejecutarRotarDerecha, false},
+    {"--rotar-izquierda", ejecutarRotarIzquierda, false},
+    {"--achicar", ejecutarAchicar, false},
+
+};
+static int totalFiltros = sizeof(filtros) / sizeof(filtros[0]);
+
+Filtro *buscarFiltro(const char *nombre) {
+    for (int i = 0; i < totalFiltros; i++) {
+        if (strcmp(filtros[i].nombre, nombre) == 0) {
+            return &filtros[i];
+        }
     }
+    return NULL;
+}
 
-    printf("\nCargando: %s...", argv[1]);
-    sImagen *imagen = CargarImagen(argv[1]);
-    if(imagen == NULL)
-    {
-        printf("\nError: no se pudo cargar la imagen.\n");
-        return 1;
+void procesarArgumentos(int argc, char *argv[], Imagen *imagen, char *nomarch) {
+    int porcentaje;
+    char nombre[50];
+    Filtro *filtro;
+
+    for (int i = 1; i < argc; i++) {
+        if (esArchivoBMP(argv[i])) continue;
+
+        if (strcmp(argv[i], "--concatenar-horizontal") == 0 || strcmp(argv[i], "--concatenar-vertical") == 0) {
+            ejecutarConcatenar(imagen, argc, argv, argv[i], nomarch);
+            continue;
+        }
+
+        if (obtenerFiltroConPorcentaje(argv[i], nombre, &porcentaje)) {
+            filtro = buscarFiltro(nombre);
+            if (!filtro) { fprintf(stderr, "Filtro invalido: %s\n", nombre); continue; }
+            if (porcentaje < 0 || porcentaje > 100) { fprintf(stderr, "Porcentaje invalido.\n"); continue; }
+            if (filtro->ejecutado) continue;
+
+            if (filtro->funcion(imagen, porcentaje, nombre, nomarch)) {
+                filtro->ejecutado = true;
+            }
+        } else {
+            filtro = buscarFiltro(argv[i]);
+            if (!filtro) { fprintf(stderr, "Argumento invalido: %s\n", argv[i]); continue; }
+            if (filtro->ejecutado) continue;
+
+            const char *nombreLimpio = argv[i];
+            if (strncmp(nombreLimpio, "--", 2) == 0) nombreLimpio += 2;
+
+            if (filtro->funcion(imagen, 0, (char*)nombreLimpio, nomarch)) {
+                filtro->ejecutado = true;
+            }
+        }
     }
-
-    ImprimirInfoImagen(imagen);
-    printf("\nListo, imagen cargada correctamente.");
-
-    sImagen *copia = CopiarImagen(imagen);
-    if(copia == NULL)
-    {
-        printf("\nError: no se pudo copiar la imagen.");
-        LiberarImagen(imagen);
-        return 1;
-    }
-
-    if(!EscribirBMP("copia.bmp", copia))
-    {
-        LiberarImagen(copia);
-        LiberarImagen(imagen);
-        return 1;
-    }
-
-    LiberarImagen(copia);
-    LiberarImagen(imagen);
-
-    return 0;
 }
