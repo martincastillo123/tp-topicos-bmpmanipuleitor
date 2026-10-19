@@ -5,7 +5,10 @@ bool Negativo(Imagen *original, int parametro, char *nombreFiltro, char *nombreA
     char destino[TAM_MAX];
     Imagen *resultado = copiarImagen(original);
     if(resultado == NULL)
+    {
+        fprintf(stderr, "Error: no hay memoria suficiente para aplicar %s\n", nombreFiltro);
         return false;
+    }
 
     int alto = resultado->cabeceraImagen.alto;
     if(alto < 0)
@@ -22,7 +25,13 @@ bool Negativo(Imagen *original, int parametro, char *nombreFiltro, char *nombreA
     }
 
     generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombreFiltro, nombreArchivo);
-    generarBMP(destino, resultado);
+    if(!generarBMP(destino, resultado))
+    {
+        fprintf(stderr, "Error: no se pudo guardar el archivo %s\n", destino);
+        liberarImagen(resultado);
+        return false;
+    }
+
     liberarImagen(resultado);
     return true;
 }
@@ -32,7 +41,10 @@ bool EscalaDeGrises(Imagen *original, int parametro, char *nombreFiltro, char *n
     char destino[TAM_MAX];
     Imagen *resultado = copiarImagen(original);
     if(resultado == NULL)
+    {
+        fprintf(stderr, "Error: no hay memoria suficiente para aplicar %s\n", nombreFiltro);
         return false;
+    }
 
     int alto = resultado->cabeceraImagen.alto;
     if(alto < 0)
@@ -51,7 +63,13 @@ bool EscalaDeGrises(Imagen *original, int parametro, char *nombreFiltro, char *n
     }
 
     generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombreFiltro, nombreArchivo);
-    generarBMP(destino, resultado);
+    if(!generarBMP(destino, resultado))
+    {
+        fprintf(stderr, "Error: no se pudo guardar el archivo %s\n", destino);
+        liberarImagen(resultado);
+        return false;
+    }
+
     liberarImagen(resultado);
     return true;
 }
@@ -61,7 +79,10 @@ bool ReducirContraste(Imagen *original, int parametro, char *nombreFiltro, char 
     char destino[TAM_MAX];
     Imagen *resultado = copiarImagen(original);
     if(resultado == NULL)
+    {
+        fprintf(stderr, "Error: no hay memoria suficiente para aplicar %s\n", nombreFiltro);
         return false;
+    }
 
     int alto = resultado->cabeceraImagen.alto;
     if(alto < 0)
@@ -78,7 +99,13 @@ bool ReducirContraste(Imagen *original, int parametro, char *nombreFiltro, char 
     }
 
     generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombreFiltro, nombreArchivo);
-    generarBMP(destino, resultado);
+    if(!generarBMP(destino, resultado))
+    {
+        fprintf(stderr, "Error: no se pudo guardar el archivo %s\n", destino);
+        liberarImagen(resultado);
+        return false;
+    }
+
     liberarImagen(resultado);
     return true;
 }
@@ -100,7 +127,10 @@ bool Recortar(Imagen *original, int parametro, char *nombreFiltro, char *nombreA
 
     Imagen *resultado = malloc(sizeof(Imagen));
     if(resultado == NULL)
+    {
+        fprintf(stderr, "Error: no hay memoria suficiente para aplicar %s\n", nombreFiltro);
         return false;
+    }
 
     resultado->cabeceraArchivo = original->cabeceraArchivo;
     resultado->cabeceraImagen = original->cabeceraImagen;
@@ -109,6 +139,7 @@ bool Recortar(Imagen *original, int parametro, char *nombreFiltro, char *nombreA
 
     if(!reservarMatriz(resultado))
     {
+        fprintf(stderr, "Error: no hay memoria suficiente para aplicar %s\n", nombreFiltro);
         free(resultado);
         return false;
     }
@@ -120,7 +151,13 @@ bool Recortar(Imagen *original, int parametro, char *nombreFiltro, char *nombreA
     }
 
     generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombreFiltro, nombreArchivo);
-    generarBMP(destino, resultado);
+    if(!generarBMP(destino, resultado))
+    {
+        fprintf(stderr, "Error: no se pudo guardar el archivo %s\n", destino);
+        liberarImagen(resultado);
+        return false;
+    }
+
     liberarImagen(resultado);
     return true;
 }
