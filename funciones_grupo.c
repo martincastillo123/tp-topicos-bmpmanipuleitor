@@ -3,7 +3,10 @@
 // Tabla global de filtros simples y con porcentaje asignando las funciones de cada integrante
 static Filtro filtros[] = {
 
-    {"--negativo", ejecutarNegativo, false},
+    {"--negativo", Negativo, false},
+    {"--escala-de-grises", EscalaDeGrises, false},
+    {"--reducir-contraste", ReducirContraste, false},
+    {"--recortar", Recortar, false},
     {"--aumentar-contraste", ejecutarAumentarContraste, false},
     {"--rotar-derecha", ejecutarRotarDerecha, false},
     {"--rotar-izquierda", ejecutarRotarIzquierda, false},
