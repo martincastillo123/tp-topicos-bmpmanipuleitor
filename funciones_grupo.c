@@ -25,12 +25,20 @@ void procesarArgumentos(int argc, char *argv[], Imagen *imagen, char *nomarch) {
     int porcentaje;
     char nombre[50];
     Filtro *filtro;
+    bool concatHorizontalHecho = false;
+    bool concatVerticalHecho = false;
 
     for (int i = 1; i < argc; i++) {
         if (esArchivoBMP(argv[i])) continue;
 
-        if (strcmp(argv[i], "--concatenar-horizontal") == 0 || strcmp(argv[i], "--concatenar-vertical") == 0) {
-            ejecutarConcatenar(imagen, argc, argv, argv[i], nomarch);
+        if (strcmp(argv[i], "--concatenar-horizontal") == 0) {
+            if (concatHorizontalHecho) continue;
+            if (ejecutarConcatenar(imagen, argc, argv, argv[i], nomarch)) concatHorizontalHecho = true;
+            continue;
+        }
+        if (strcmp(argv[i], "--concatenar-vertical") == 0) {
+            if (concatVerticalHecho) continue;
+            if (ejecutarConcatenar(imagen, argc, argv, argv[i], nomarch)) concatVerticalHecho = true;
             continue;
         }
 
@@ -40,7 +48,10 @@ void procesarArgumentos(int argc, char *argv[], Imagen *imagen, char *nomarch) {
             if (porcentaje < 0 || porcentaje > 100) { fprintf(stderr, "Porcentaje invalido.\n"); continue; }
             if (filtro->ejecutado) continue;
 
-            if (filtro->funcion(imagen, porcentaje, nombre, nomarch)) {
+            const char *nombreLimpio = nombre;
+            if (strncmp(nombreLimpio, "--", 2) == 0) nombreLimpio += 2;
+
+            if (filtro->funcion(imagen, porcentaje, (char*)nombreLimpio, nomarch)) {
                 filtro->ejecutado = true;
             }
         } else {

@@ -78,10 +78,9 @@ Imagen *cargarBMP(const char *nombreArchivo) {
         bytesFaltantes--;
     }
 
-    if (imagen->cabeceraImagen.tamanoCabecera > 40) {
-        imagen->cabeceraImagen.tamanoCabecera = 40;
-        imagen->cabeceraArchivo.inicioDatos = 54;
-    }
+    // generarBMP siempre escribe una cabecera de 54 bytes, sin bytes extra
+    imagen->cabeceraImagen.tamanoCabecera = 40;
+    imagen->cabeceraArchivo.inicioDatos = 54;
 
     if (!reservarMatriz(imagen)) {
         free(imagen); fclose(archivo); return NULL;
@@ -116,8 +115,18 @@ bool generarBMP(const char *nombreArchivoSalida, const Imagen *imagen) {
     FILE *archivo = fopen(nombreArchivoSalida, "wb");
     if (!archivo) return false;
 
+    int ancho = imagen->cabeceraImagen.ancho;
+    int alto = imagen->cabeceraImagen.alto;
+    int altoAbs = (alto < 0) ? -alto : alto;
+    int padding = (4 - (ancho * 3) % 4) % 4;
+    unsigned char relleno[3] = {0, 0, 0};
+
+    // Recalculamos los tamanos porque algunos filtros cambian las dimensiones
+    unsigned int tamanoImagen = (unsigned int)((ancho * 3 + padding) * altoAbs);
+    unsigned int tamanoArchivo = imagen->cabeceraArchivo.inicioDatos + tamanoImagen;
+
     fwrite(&imagen->cabeceraArchivo.tipo, sizeof(unsigned short), 1, archivo);
-    fwrite(&imagen->cabeceraArchivo.tamanoArchivo, sizeof(unsigned int), 1, archivo);
+    fwrite(&tamanoArchivo, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.reservado1, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.reservado2, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraArchivo.inicioDatos, sizeof(unsigned int), 1, archivo);
@@ -128,17 +137,11 @@ bool generarBMP(const char *nombreArchivoSalida, const Imagen *imagen) {
     fwrite(&imagen->cabeceraImagen.planos, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraImagen.bitsPorPixel, sizeof(unsigned short), 1, archivo);
     fwrite(&imagen->cabeceraImagen.compresion, sizeof(unsigned int), 1, archivo);
-    fwrite(&imagen->cabeceraImagen.tamanoImagen, sizeof(unsigned int), 1, archivo);
+    fwrite(&tamanoImagen, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.resolucionHorizontal, sizeof(int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.resolucionVertical, sizeof(int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.coloresTabla, sizeof(unsigned int), 1, archivo);
     fwrite(&imagen->cabeceraImagen.coloresImportantes, sizeof(unsigned int), 1, archivo);
-
-    int ancho = imagen->cabeceraImagen.ancho;
-    int alto = imagen->cabeceraImagen.alto;
-    int altoAbs = (alto < 0) ? -alto : alto;
-    int padding = (4 - (ancho * 3) % 4) % 4;
-    unsigned char relleno[3] = {0, 0, 0};
 
     for (int fila = altoAbs - 1; fila >= 0; fila--) {
         for (int col = 0; col < ancho; col++) {
@@ -229,7 +232,20 @@ bool obtenerFiltroConPorcentaje(const char *argumento, char *nombre, int *porcen
     strncpy(nombre, argumento, longitudNombre);
     nombre[longitudNombre] = '\0';
 
-    *porcentaje = atoi(igual + 1);
+    // El valor tiene que ser de 1 a 3 digitos; si no, se marca con -1 para que falle la validacion de rango
+    const char *valor = igual + 1;
+    if (*valor == '\0') {
+        *porcentaje = -1;
+        return true;
+    }
+    for (const char *c = valor; *c != '\0'; c++) {
+        if (*c < '0' || *c > '9' || c - valor >= 3) {
+            *porcentaje = -1;
+            return true;
+        }
+    }
+
+    *porcentaje = atoi(valor);
     return true;
 }
 
