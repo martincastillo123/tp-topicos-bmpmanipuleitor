@@ -44,6 +44,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="funciones_grupo.h" />
+		<Unit filename="funciones_saquilan.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="funciones_saquilan.h" />
 		<Unit filename="funciones_tamburrini.c">
 			<Option compilerVar="CC" />
 		</Unit>
