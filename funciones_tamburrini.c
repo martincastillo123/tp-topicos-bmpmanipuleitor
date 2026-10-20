@@ -206,55 +206,6 @@ Imagen *concatenarMatrices(const Imagen *img1, const Imagen *img2, bool esHorizo
 
     return resultado;
 }
-bool ejecutarNegativo(Imagen *imagen, int porcentaje, char* nombrefiltro, char* nomarch)
-{
-    char destino[TAM_MAX]; // ¡Arreglo con tamaño, no puntero suelto!
-    Imagen *copia;
-    (void)porcentaje;
-
-    copia = copiarImagen(imagen);
-
-    if (copia == NULL) {
-        return false;
-    }
-
-    negativo(copia);
-    generarNombre(destino, TAM_MAX, NOMBRE_GRUPO, nombrefiltro, nomarch);
-    generarBMP(destino, copia);
-
-    liberarImagen(copia);
-
-    return true;
-}
-void negativo(Imagen *imagen)
-{
-    int fila;
-    int columna;
-    int alto;
-    int ancho;
-
-    ancho = imagen->cabeceraImagen.ancho;
-    alto = imagen->cabeceraImagen.alto;
-
-    if (alto < 0) {
-        alto = -alto;
-    }
-
-    for (fila = 0; fila < alto; fila++) {
-
-        for (columna = 0; columna < ancho; columna++) {
-
-            imagen->pixeles[fila][columna].rojo =
-                255 - imagen->pixeles[fila][columna].rojo;
-
-            imagen->pixeles[fila][columna].verde =
-                255 - imagen->pixeles[fila][columna].verde;
-
-            imagen->pixeles[fila][columna].azul =
-                255 - imagen->pixeles[fila][columna].azul;
-        }
-    }
-}
 bool ejecutarAumentarContraste(Imagen *imagen, int porcentaje, char* nombrefiltro, char* nomarch)
 {
     char destino[TAM_MAX];

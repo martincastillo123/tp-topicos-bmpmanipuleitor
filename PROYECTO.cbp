@@ -36,6 +36,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="compartido.h" />
+		<Unit filename="funciones_castillo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="funciones_castillo.h" />
 		<Unit filename="funciones_grupo.c">
 			<Option compilerVar="CC" />
 		</Unit>
