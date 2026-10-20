@@ -4,10 +4,10 @@
 #include "compartido.h"
 
 #include "funciones_tamburrini.h"
+#include "funciones_saquilan.h"
 /*
-#include funciones_aguila.h
-#include funciones_castillo.h
-#include funciones_saquilan.h
+#include "funciones_aguila.h"
+#include "funciones_castillo.h"
 */
 typedef bool (*FuncionFiltro)(Imagen *, int, char *, char *);
 

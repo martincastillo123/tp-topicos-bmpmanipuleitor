@@ -5,6 +5,9 @@ static Filtro filtros[] = {
 
     {"--negativo", ejecutarNegativo, false},
     {"--aumentar-contraste", ejecutarAumentarContraste, false},
+    {"--reducir-contraste", ejecutarReducirContraste, false},
+    {"--espejar-horizontal", ejecutarEspejarHorizontal, false},
+    {"--espejar-vertical", ejecutarEspejarVertical, false},
     {"--rotar-derecha", ejecutarRotarDerecha, false},
     {"--rotar-izquierda", ejecutarRotarIzquierda, false},
     {"--achicar", ejecutarAchicar, false},
